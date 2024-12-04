@@ -1,0 +1,28 @@
+[project]
+name = "notion-mcp"
+version = "0.1.0"
+description = "MCP server for Notion integration"
+authors = [
+    {name = "Chase Cabanillas", email = "chase.cabanillas@gmail.com"}
+]
+dependencies = [
+    "mcp>=0.1.0",
+    "httpx>=0.24.0",
+    "pydantic>=2.0.0",
+    "python-dotenv>=1.0.0",
+]
+requires-python = ">=3.10"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.rye]
+managed = true
+dev-dependencies = [
+    "pytest>=7.3.1",
+    "pytest-asyncio>=0.21.0"
+]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
