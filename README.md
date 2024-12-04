@@ -15,7 +15,7 @@ A Model Context Protocol (MCP) server implementation for Notion integration, pro
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/notion-mcp.git
+git clone https://github.com/ccabanillas/notion-mcp.git
 cd notion-mcp
 ```
 
@@ -99,4 +99,3 @@ MIT License - Use at your own risk
 - Built to work with Claude Desktop
 - Uses Notion's API
 - Special thanks to [danhilse], I referenced his [notion-mcp-server](https://github.com/danhilse/notion-mcp-server) project
-This project is licensed under the MIT License - see the LICENSE file for details.
