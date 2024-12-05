@@ -33,18 +33,20 @@ NOTION_API_KEY=your_notion_integration_token
 
 ## Usage
 
-1. Start the server:
+1. Test the server(it should just run without errors):
 ```bash
 python -m notion_mcp
 ```
 
-2. The server exposes the following MCP tools:
+2. To actually use it with Claude Desktop as intended you need to adjust your claude_desktop_config.json file
 
-- `list_databases`: List all accessible Notion databases
-- `query_database`: Query items from a database with filtering and sorting
-- `create_page`: Create new pages in databases
-- `update_page`: Update existing pages
-- `search`: Search across Notion content
+```
+"notion-mcp": {
+            "command": "/Users/username/Projects/notion-mcp/venv/bin/python3", <--Path your virtual environment
+            "args": ["-m", "notion_mcp"],
+            "cwd": "/Users/username/Projects/notion-mcp" <-- Path to your project
+    },
+```
 
 ## Development
 
