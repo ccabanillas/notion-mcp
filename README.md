@@ -1,4 +1,5 @@
 # Notion MCP Server
+[![smithery badge](https://smithery.ai/badge/@ccabanillas/notion-mcp)](https://smithery.ai/server/@ccabanillas/notion-mcp)
 
 A Model Context Protocol (MCP) server implementation for Notion integration, providing a standardized interface for interacting with Notion's API.
 
@@ -13,6 +14,15 @@ A Model Context Protocol (MCP) server implementation for Notion integration, pro
 
 ## Installation
 
+### Installing via Smithery
+
+To install Notion Integration Server for Claude Desktop automatically via [Smithery](https://smithery.ai/server/@ccabanillas/notion-mcp):
+
+```bash
+npx -y @smithery/cli install @ccabanillas/notion-mcp --client claude
+```
+
+### Manual Installation
 1. Clone the repository:
 ```bash
 git clone https://github.com/ccabanillas/notion-mcp.git
