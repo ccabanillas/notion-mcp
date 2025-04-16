@@ -219,7 +219,7 @@ async def call_tool(name: str, arguments: Any) -> Sequence[Union[TextContent, Em
                     type="text",
                     text=json.dumps({
                         "databases": [db.model_dump() for db in databases]
-                    }, indent=2)
+                    }, indent=2, default=str)
                 )
             ]
             
@@ -257,7 +257,7 @@ async def call_tool(name: str, arguments: Any) -> Sequence[Union[TextContent, Em
             return [
                 TextContent(
                     type="text",
-                    text=json.dumps(results, indent=2)
+                    text=json.dumps(results, indent=2, default=str)
                 )
             ]
             
@@ -319,7 +319,7 @@ async def call_tool(name: str, arguments: Any) -> Sequence[Union[TextContent, Em
             return [
                 TextContent(
                     type="text",
-                    text=json.dumps(results, indent=2)
+                    text=json.dumps(results, indent=2, default=str)
                 )
             ]
             
