@@ -164,59 +164,63 @@ class NotionClient:
             raise
     
     async def search(
-        self,
-        query: str = "",
-        filter: Optional[Dict[str, Any]] = None,
-        sort: Optional[Dict[str, Any]] = None,
-        start_cursor: Optional[str] = None,
-        page_size: int = 100
-    ) -> SearchResults:
-        """Search Notion."""
-        try:
-            body = {
-                "query": query,
-                "page_size": page_size
-            }
-            if filter:
-                body["filter"] = filter
-            if sort:
-                body["sort"] = sort
-            if start_cursor:
-                body["start_cursor"] = start_cursor
-                
-            async with httpx.AsyncClient() as client:
-                response = await client.post(
-                    f"{self.base_url}/search",
-                    headers=self.headers,
-                    json=body
-                )
-                response.raise_for_status()
-                data = response.json()
-                
-                # Convert results based on their object type
-                results = []
-                for item in data.get("results", []):
-                    try:
-                        if item["object"] == "database":
-                            results.append(Database.model_validate(item))
-                        elif item["object"] == "page":
-                            results.append(Page.model_validate(item))
-                    except Exception as e:
-                        self.logger.warning(f"Error processing search result: {str(e)}")
-                        continue
-                
-                return SearchResults(
-                    object="list",
-                    results=results,
-                    next_cursor=data.get("next_cursor"),
-                    has_more=data.get("has_more", False)
-                )
-        except httpx.HTTPStatusError as e:
-            self.logger.error(f"HTTP error during search: {e.response.status_code} - {e.response.text}")
-            raise
-        except Exception as e:
-            self.logger.error(f"Error during search: {str(e)}")
-            raise
+    self,
+    query: str = "",
+    filter: Optional[Dict[str, Any]] = None,
+    sort: Optional[Dict[str, Any]] = None,
+    start_cursor: Optional[str] = None,
+    page_size: int = 100
+) -> SearchResults:
+    """Search Notion."""
+    try:
+        body = {
+            "query": query,
+            "page_size": page_size
+        }
+
+        # Solo incluir si son válidos
+        if filter and isinstance(filter, dict) and filter != {}:
+            body["filter"] = filter
+        if sort and isinstance(sort, dict) and sort != {}:
+            body["sort"] = sort
+        if start_cursor:
+            body["start_cursor"] = start_cursor
+
+        self.logger.info(f"📡 Sending search request to Notion with body: {body}")
+
+        async with httpx.AsyncClient() as client:
+            response = await client.post(
+                f"{self.base_url}/search",
+                headers=self.headers,
+                json=body
+            )
+            response.raise_for_status()
+            data = response.json()
+
+            results = []
+            for item in data.get("results", []):
+                try:
+                    if item["object"] == "database":
+                        results.append(Database.model_validate(item))
+                    elif item["object"] == "page":
+                        results.append(Page.model_validate(item))
+                except Exception as e:
+                    self.logger.warning(f"⚠️ Error processing search result: {str(e)}")
+                    continue
+
+            return SearchResults(
+                object="list",
+                results=results,
+                next_cursor=data.get("next_cursor"),
+                has_more=data.get("has_more", False)
+            )
+
+    except httpx.HTTPStatusError as e:
+        self.logger.error(f"❌ HTTP error during search: {e.response.status_code} - {e.response.text}")
+        raise
+    except Exception as e:
+        self.logger.error(f"❌ Error during search: {str(e)}")
+        raise
             
     async def get_block_children(
         self,
