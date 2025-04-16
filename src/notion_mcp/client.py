@@ -163,7 +163,7 @@ class NotionClient:
             self.logger.error(f"Error updating page {page_id}: {str(e)}")
             raise
     
-    async def search(
+async def search(
     self,
     query: str = "",
     filter: Optional[Dict[str, Any]] = None,
@@ -221,6 +221,7 @@ class NotionClient:
     except Exception as e:
         self.logger.error(f"❌ Error during search: {str(e)}")
         raise
+
             
     async def get_block_children(
         self,
