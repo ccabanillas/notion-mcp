@@ -40,14 +40,15 @@ class NotionClient:
     async def list_databases(self) -> List[Database]:
         """List all databases the integration has access to."""
         try:
+            self.logger.info("📡 Sending request to Notion API to list databases...")
             async with httpx.AsyncClient() as client:
                 response = await client.post(
                     f"{self.base_url}/search",
                     headers=self.headers,
                     json={
                         "filter": {
-                            "property": "object",
-                            "value": "database"
+                            "value": "database",
+                            "property": "object"
                         },
                         "page_size": 100,
                         "sort": {
@@ -58,6 +59,8 @@ class NotionClient:
                 )
                 response.raise_for_status()
                 data = response.json()
+                self.logger.info(f"✅ Response received from Notion. Status: {response.status_code}")
+                self.logger.info(f"📦 Found {len(data.get('results', []))} database(s)")
                 if not data.get("results"):
                     return []
                 return [Database.model_validate(db) for db in data["results"]]
