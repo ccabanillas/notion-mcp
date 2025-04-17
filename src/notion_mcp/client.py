@@ -40,14 +40,15 @@ class NotionClient:
     async def list_databases(self) -> List[Database]:
         """List all databases the integration has access to."""
         try:
+            self.logger.info("📡 Sending request to Notion API to list databases...")
             async with httpx.AsyncClient() as client:
                 response = await client.post(
                     f"{self.base_url}/search",
                     headers=self.headers,
                     json={
                         "filter": {
-                            "property": "object",
-                            "value": "database"
+                            "value": "database",
+                            "property": "object"
                         },
                         "page_size": 100,
                         "sort": {
@@ -58,6 +59,8 @@ class NotionClient:
                 )
                 response.raise_for_status()
                 data = response.json()
+                self.logger.info(f"✅ Response received from Notion. Status: {response.status_code}")
+                self.logger.info(f"📦 Found {len(data.get('results', []))} database(s)")
                 if not data.get("results"):
                     return []
                 return [Database.model_validate(db) for db in data["results"]]
@@ -174,13 +177,17 @@ class NotionClient:
                 "query": query,
                 "page_size": page_size
             }
-            if filter:
+    
+            # Solo incluir si son válidos
+            if filter and isinstance(filter, dict) and filter != {}:
                 body["filter"] = filter
-            if sort:
+            if sort and isinstance(sort, dict) and sort != {}:
                 body["sort"] = sort
             if start_cursor:
                 body["start_cursor"] = start_cursor
-                
+    
+            self.logger.info(f"📡 Sending search request to Notion with body: {body}")
+    
             async with httpx.AsyncClient() as client:
                 response = await client.post(
                     f"{self.base_url}/search",
@@ -189,8 +196,7 @@ class NotionClient:
                 )
                 response.raise_for_status()
                 data = response.json()
-                
-                # Convert results based on their object type
+    
                 results = []
                 for item in data.get("results", []):
                     try:
@@ -199,21 +205,23 @@ class NotionClient:
                         elif item["object"] == "page":
                             results.append(Page.model_validate(item))
                     except Exception as e:
-                        self.logger.warning(f"Error processing search result: {str(e)}")
+                        self.logger.warning(f"⚠️ Error processing search result: {str(e)}")
                         continue
-                
+    
                 return SearchResults(
                     object="list",
                     results=results,
                     next_cursor=data.get("next_cursor"),
                     has_more=data.get("has_more", False)
                 )
+    
         except httpx.HTTPStatusError as e:
-            self.logger.error(f"HTTP error during search: {e.response.status_code} - {e.response.text}")
+            self.logger.error(f"❌ HTTP error during search: {e.response.status_code} - {e.response.text}")
             raise
         except Exception as e:
-            self.logger.error(f"Error during search: {str(e)}")
+            self.logger.error(f"❌ Error during search: {str(e)}")
             raise
+
             
     async def get_block_children(
         self,
