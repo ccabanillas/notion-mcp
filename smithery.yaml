@@ -1,0 +1,25 @@
+# Smithery configuration file: https://smithery.ai/docs/config#smitheryyaml
+
+startCommand:
+  type: stdio
+  configSchema:
+    # JSON Schema defining the configuration options for the MCP.
+    type: object
+    required:
+      - notionApiKey
+    properties:
+      notionApiKey:
+        type: string
+        description: Notion Integration API Key obtained from
+          https://www.notion.so/my-integrations
+    description: Configuration for Notion MCP server
+  commandFunction:
+    # A JS function that produces the CLI command based on the given config to start the MCP on stdio.
+    |-
+    (config) => ({
+      command: 'python',
+      args: ['-m', 'notion_mcp'],
+      env: { NOTION_API_KEY: config.notionApiKey }
+    })
+  exampleConfig:
+    notionApiKey: secret_example_notion_api_key_123
