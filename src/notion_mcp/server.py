@@ -29,9 +29,8 @@ logger = logging.getLogger('notion_mcp')
 # Find and load .env file from project root
 project_root = Path(__file__).parent.parent.parent
 env_path = project_root / '.env'
-if not env_path.exists():
-    raise FileNotFoundError(f"No .env file found at {env_path}")
-load_dotenv(env_path)
+if env_path.exists():
+    load_dotenv(env_path)
 
 # Configuration with validation
 NOTION_API_KEY = os.getenv("NOTION_API_KEY")
@@ -219,7 +218,7 @@ async def call_tool(name: str, arguments: Any) -> Sequence[Union[TextContent, Em
                     type="text",
                     text=json.dumps({
                         "databases": [db.model_dump() for db in databases]
-                    }, indent=2)
+                    }, indent=2, default=str)
                 )
             ]
             
@@ -257,7 +256,7 @@ async def call_tool(name: str, arguments: Any) -> Sequence[Union[TextContent, Em
             return [
                 TextContent(
                     type="text",
-                    text=json.dumps(results, indent=2)
+                    text=json.dumps(results, indent=2, default=str)
                 )
             ]
             
@@ -319,7 +318,7 @@ async def call_tool(name: str, arguments: Any) -> Sequence[Union[TextContent, Em
             return [
                 TextContent(
                     type="text",
-                    text=json.dumps(results, indent=2)
+                    text=json.dumps(results, indent=2, default=str)
                 )
             ]
             
